@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Airbnb Audit</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <h1>Why is your Airbnb not getting enough bookings?</h1>
+	  <h1>¿Por qué tu Airbnb no recibe reservas?</h1>
+      <p>
+        Get a clear manual audit of your listing with practical fixes:
+        photo order, title, pricing positioning, and conversion issues.
+		<br>
+		Analizo tu anuncio manualmente y te digo qué está frenando tus reservas:
+fotos, orden, título, precio y errores clave.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Request your audit</h2>
+      <h2>Quiero mi análisis</h2>
+
+      <% if (error) { %>
+        <div class="error"><%= error %></div>
+      <% } %>
+
+      <form method="POST" action="/submit" class="form">
+        <label>
+          Name *
+          <input type="text" name="name" value="<%= formData.name %>" required />
+        </label>
+
+        <label>
+          Email *
+          <input type="email" name="email" value="<%= formData.email %>" required />
+        </label>
+
+        <label>
+          Airbnb listing URL *
+          <input
+            type="url"
+            name="airbnb_url"
+            placeholder="https://www.airbnb.com/rooms/..."
+            value="<%= formData.airbnb_url %>"
+            required
+          />
+        </label>
+
+        <label>
+          Notes
+          <textarea
+            name="notes"
+            rows="4"
+            placeholder="Anything specific you want reviewed?"
+          ><%= formData.notes %></textarea>
+        </label>
+
+        <button type="submit">Send request</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

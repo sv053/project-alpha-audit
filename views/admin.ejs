@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <main class="container">
+    <section class="card">
+      <h1>Submissions</h1>
+
+      <% if (!submissions.length) { %>
+        <p>No submissions yet.</p>
+      <% } else { %>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Created</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Listing</th>
+                <th>Notes</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% submissions.forEach((item) => { %>
+                <tr>
+                  <td><%= item.id %></td>
+                  <td><%= item.created_at %></td>
+                  <td><%= item.name %></td>
+                  <td><%= item.email %></td>
+                  <td>
+                    <a href="<%= item.airbnb_url %>" target="_blank" rel="noopener noreferrer">
+                      Open
+                    </a>
+                  </td>
+                  <td><%= item.notes || "-" %></td>
+                  <td><%= item.status %></td>
+                  <td>
+                    <form method="POST" action="/admin/update-status/<%= item.id %>">
+                      <select name="status">
+                        <option value="new" <%= item.status === "new" ? "selected" : "" %>>new</option>
+                        <option value="in_progress" <%= item.status === "in_progress" ? "selected" : "" %>>in_progress</option>
+                        <option value="done" <%= item.status === "done" ? "selected" : "" %>>done</option>
+                      </select>
+                      <button type="submit">Save</button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </section>
+  </main>
+</body>
+</html>
