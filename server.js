@@ -11,6 +11,32 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
+// 🔒 Basic Auth middleware
+function basicAuth(req, res, next) {
+  const auth = req.headers.authorization;
+
+  if (!auth) {
+    res.setHeader("WWW-Authenticate", 'Basic realm="Admin Area"');
+    return res.status(401).send("Authentication required");
+  }
+
+  const base64 = auth.split(" ")[1];
+  const [user, pass] = Buffer.from(base64, "base64")
+    .toString()
+    .split(":");
+
+  if (
+    user === process.env.ADMIN_USER &&
+    pass === process.env.ADMIN_PASS
+  ) {
+    return next();
+  }
+
+  res.setHeader("WWW-Authenticate", 'Basic realm="Admin Area"');
+  return res.status(401).send("Invalid credentials");
+}
+
+// простая проверка ссылки
 function isValidAirbnbUrl(url) {
   try {
     const parsed = new URL(url);
@@ -20,6 +46,7 @@ function isValidAirbnbUrl(url) {
   }
 }
 
+// главная страница
 app.get("/", (req, res) => {
   res.render("home", {
     error: null,
@@ -32,6 +59,7 @@ app.get("/", (req, res) => {
   });
 });
 
+// отправка формы
 app.post("/submit", (req, res) => {
   const { name, email, airbnb_url, notes } = req.body;
 
@@ -78,11 +106,13 @@ app.post("/submit", (req, res) => {
   );
 });
 
+// страница "спасибо"
 app.get("/thanks", (req, res) => {
   res.render("thanks");
 });
 
-app.get("/admin", (req, res) => {
+// 🔐 админка (ЗАЩИЩЕНА)
+app.get("/admin", basicAuth, (req, res) => {
   db.all(
     `
       SELECT id, name, email, airbnb_url, notes, status, created_at
@@ -101,7 +131,8 @@ app.get("/admin", (req, res) => {
   );
 });
 
-app.post("/admin/update-status/:id", (req, res) => {
+// обновление статуса
+app.post("/admin/update-status/:id", basicAuth, (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
