@@ -1,35 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Airbnb Audit</title>
+  <title>Análisis Airbnb</title>
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
   <main class="container">
+    
     <section class="hero">
-     <!-- <h1>Why is your Airbnb not getting enough bookings?</h1> -->
-	  <h1>¿Por qué tu Airbnb no recibe reservas?</h1>
+      <h1>¿Por qué tu Airbnb no recibe reservas como debería?</h1>
       <p>
-      <!--  Get a clear manual audit of your listing with practical fixes:
-        photo order, title, pricing positioning, and conversion issues.
-		<br> -->
-		Analizamos tu anuncio y te decimos qué está frenando tus reservas: portada, orden de fotos, título, precio y errores clave...
+        Analizo tu anuncio manualmente y te digo exactamente qué está frenando tus reservas:
+        portada, orden de fotos, título, precio y errores clave.
       </p>
     </section>
 
     <section class="card">
-      <h2>Request your audit</h2>
-      <h2>Quiero mi análisis</h2>
+      
+      <p style="font-weight: 600; margin-bottom: 12px;">
+        Análisis gratuito en fase beta (plazas limitadas)
+      </p>
+
+      <h2>Solicita tu análisis</h2>
 
       <% if (error) { %>
         <div class="error"><%= error %></div>
       <% } %>
 
       <form method="POST" action="/submit" class="form">
+        
         <label>
-          Name *
+          Nombre *
           <input type="text" name="name" value="<%= formData.name %>" required />
         </label>
 
@@ -39,7 +42,7 @@
         </label>
 
         <label>
-          Airbnb listing URL *
+          Enlace del anuncio Airbnb *
           <input
             type="url"
             name="airbnb_url"
@@ -50,17 +53,24 @@
         </label>
 
         <label>
-          Notes
+          Notas
           <textarea
             name="notes"
             rows="4"
-            placeholder="Anything specific you want reviewed?"
+            placeholder="¿Hay algo concreto que quieras que revise?"
           ><%= formData.notes %></textarea>
         </label>
 
-       <!-- <button type="submit">Send request</button> -->
-		<button type="submit">Solicita tu análisis</button>
+        <button type="submit">Quiero mi análisis</button>
       </form>
+
+      <div style="margin-top: 20px;">
+        <p>✔ Análisis manual, no automático</p>
+        <p>✔ Errores claros y accionables</p>
+        <p>✔ Recomendaciones específicas</p>
+        <p>✔ Respuesta en 24–48h</p>
+      </div>
+
     </section>
   </main>
 </body>

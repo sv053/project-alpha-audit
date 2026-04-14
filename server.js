@@ -1,5 +1,6 @@
 const path = require("path");
 const express = require("express");
+const nodemailer = require("nodemailer");
 const db = require("./db");
 
 const app = express();
@@ -11,7 +12,14 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-// 🔒 Basic Auth middleware
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
+
 function basicAuth(req, res, next) {
   const auth = req.headers.authorization;
 
@@ -36,7 +44,6 @@ function basicAuth(req, res, next) {
   return res.status(401).send("Invalid credentials");
 }
 
-// простая проверка ссылки
 function isValidAirbnbUrl(url) {
   try {
     const parsed = new URL(url);
@@ -46,7 +53,6 @@ function isValidAirbnbUrl(url) {
   }
 }
 
-// главная страница
 app.get("/", (req, res) => {
   res.render("home", {
     error: null,
@@ -59,7 +65,6 @@ app.get("/", (req, res) => {
   });
 });
 
-// отправка формы
 app.post("/submit", (req, res) => {
   const { name, email, airbnb_url, notes } = req.body;
 
@@ -101,17 +106,34 @@ app.post("/submit", (req, res) => {
         });
       }
 
+      transporter.sendMail(
+        {
+          from: process.env.EMAIL_USER,
+          to: process.env.EMAIL_USER,
+          subject: "New Airbnb audit request",
+          text: `
+Name: ${formData.name}
+Email: ${formData.email}
+URL: ${formData.airbnb_url}
+Notes: ${formData.notes}
+          `
+        },
+        (mailErr) => {
+          if (mailErr) {
+            console.error("Email error:", mailErr);
+          }
+        }
+      );
+
       return res.redirect("/thanks");
     }
   );
 });
 
-// страница "спасибо"
 app.get("/thanks", (req, res) => {
   res.render("thanks");
 });
 
-// 🔐 админка (ЗАЩИЩЕНА)
 app.get("/admin", basicAuth, (req, res) => {
   db.all(
     `
@@ -131,7 +153,6 @@ app.get("/admin", basicAuth, (req, res) => {
   );
 });
 
-// обновление статуса
 app.post("/admin/update-status/:id", basicAuth, (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
